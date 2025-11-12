@@ -1,0 +1,372 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mini E‑Commerce Portal - Demo</title>
+  <style>
+    /* Reset & base */
+    *{box-sizing:border-box}body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;margin:0;background:#f5f7fb;color:#0f172a}
+    a{color:inherit;text-decoration:none}
+    header{background:linear-gradient(90deg,#4f46e5,#06b6d4);color:white;padding:14px 20px}
+    .container{max-width:1100px;margin:20px auto;padding:0 16px}
+    nav{display:flex;align-items:center;gap:18px}
+    .brand{font-weight:700;font-size:18px}
+    .menu{margin-left:auto;display:flex;gap:12px}
+    .menu button{background:transparent;border:0;color:white;padding:6px 10px;cursor:pointer;font-weight:600}
+    .hero{display:flex;gap:20px;align-items:center;padding:24px;background:white;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.06)}/* layout */
+.grid{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:18px}
+.card{background:white;padding:16px;border-radius:10px;box-shadow:0 6px 12px rgba(2,6,23,0.04)}
+.product-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.product{border:1px solid #e6eef8;padding:12px;border-radius:8px}
+.product img{width:100%;height:140px;object-fit:cover;border-radius:6px}
+.btn{display:inline-block;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+.btn-primary{background:#4f46e5;color:white}
+.btn-ghost{background:transparent;border:1px solid #cbd5e1}
+
+/* forms */
+form{display:flex;flex-direction:column;gap:10px}
+input,textarea,select{padding:8px;border-radius:6px;border:1px solid #cbd5e1}
+label{font-weight:600;font-size:13px}
+.error{color:#d9534f;font-size:13px}
+
+/* small widgets */
+.small{font-size:13px;color:#475569}
+.list{display:flex;flex-direction:column;gap:8px}
+.list-item{padding:10px;border-radius:6px;border:1px dashed #e6eef8;background:#fbfdff}
+
+footer{margin:28px 0;text-align:center;color:#64748b}
+
+@media (max-width:880px){.grid{grid-template-columns:1fr}.menu{display:none}}
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <div class="brand">ShopEase — Demo</div>
+        <div class="menu">
+          <button data-nav="home">Home</button>
+          <button data-nav="products">Products</button>
+          <button data-nav="orders">Orders</button>
+          <button data-nav="wishlist">Wishlist</button>
+          <button data-nav="contact">Contact Us</button>
+          <button data-nav="about">About Us</button>
+          <button id="open-login" title="Login / Register">Login</button>
+        </div>
+      </nav>
+    </div>
+  </header>  <main class="container">
+    <section id="home" class="hero">
+      <div style="flex:1">
+        <h1 style="margin:0">Welcome to ShopEase</h1>
+        <p class="small">A small, single-file demo e-commerce portal. Browse products, add reviews, create an account, add to wishlist and place orders.</p>
+        <div style="margin-top:12px">
+          <button class="btn btn-primary" data-nav="products">Browse Products</button>
+        </div>
+      </div>
+      <div style="width:320px">
+        <div class="card small">
+          <strong id="welcome-user">Not signed in</strong>
+          <div style="margin-top:8px">Orders: <span id="orders-count">0</span> • Wishlist: <span id="wishlist-count">0</span></div>
+        </div>
+      </div>
+    </section><div class="grid">
+  <section style="min-height:200px">
+    <div id="products" class="card">
+      <h3>Products</h3>
+      <div class="product-list" id="product-list"></div>
+    </div>
+
+    <div id="reviews" class="card" style="margin-top:12px;display:none">
+      <h3>Comments & Reviews</h3>
+      <div id="reviews-list" class="list"></div>
+    </div>
+
+    <div id="orders" class="card" style="margin-top:12px;display:none">
+      <h3>Your Orders</h3>
+      <div id="orders-list" class="list"></div>
+    </div>
+
+  </section>
+
+  <aside>
+    <div id="wishlist" class="card" style="display:none">
+      <h4>Wishlist</h4>
+      <div id="wishlist-list" class="list"></div>
+    </div>
+
+    <div id="customer-care" class="card" style="margin-top:12px;display:none">
+      <h4>Customer Care</h4>
+      <form id="contact-form">
+        <label for="cname">Name</label>
+        <input id="cname" required />
+        <label for="cmsg">Message</label>
+        <textarea id="cmsg" rows="3" required></textarea>
+        <button class="btn btn-primary" type="submit">Send</button>
+      </form>
+    </div>
+
+    <div id="reporting" class="card" style="margin-top:12px;display:none">
+      <h4>Report a product</h4>
+      <form id="report-form">
+        <label for="rproduct">Product</label>
+        <select id="rproduct"></select>
+        <label for="rreason">Reason</label>
+        <textarea id="rreason" rows="2" required></textarea>
+        <button class="btn btn-ghost" type="submit">Report</button>
+      </form>
+    </div>
+
+  </aside>
+</div>
+
+<section id="contact" class="card" style="margin-top:18px;display:none">
+  <h3>Contact Us</h3>
+  <p class="small">Email: support@shopease.demo • Phone: +91-8000-000-000</p>
+</section>
+
+<section id="about" class="card" style="margin-top:18px;display:none">
+  <h3>About Us</h3>
+  <p class="small">ShopEase demo is a single-file educational project showing simple front-end behaviours: navigation, form validation, local persistence, wishlist & orders, comments & reporting.</p>
+</section>
+
+  </main>  <footer class="container">
+    <small>Made for learning • No real payments • Data stored locally</small>
+  </footer>  <!-- Modal: Login / Register -->  <div id="auth-modal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.5);z-index:60">
+    <div style="width:420px;background:white;padding:18px;border-radius:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Account</h3><button id="close-auth">✕</button></div>
+      <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <h4 style="margin:6px 0">Login</h4>
+          <form id="login-form">
+            <label>Email</label>
+            <input id="login-email" type="email" required />
+            <label>Password</label>
+            <input id="login-password" type="password" required />
+            <div class="error" id="login-error"></div>
+            <button class="btn btn-primary" type="submit">Login</button>
+          </form>
+        </div>
+        <div>
+          <h4 style="margin:6px 0">Register</h4>
+          <form id="register-form">
+            <label>Full name</label>
+            <input id="reg-name" required />
+            <label>Email</label>
+            <input id="reg-email" type="email" required />
+            <label>Password</label>
+            <input id="reg-password" type="password" required />
+            <label>Confirm password</label>
+            <input id="reg-confirm" type="password" required />
+            <div class="error" id="reg-error"></div>
+            <button class="btn btn-ghost" type="submit">Create account</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>  <script>
+    /* ---------- Sample data & persistence ---------- */
+    const SAMPLE_PRODUCTS = [
+      {id:'p1', title:'Wireless Headphones', price:1599, img:'https://picsum.photos/seed/1/400/300'},
+      {id:'p2', title:'Smartwatch Series 5', price:6999, img:'https://picsum.photos/seed/2/400/300'},
+      {id:'p3', title:'Bluetooth Speaker', price:1299, img:'https://picsum.photos/seed/3/400/300'},
+      {id:'p4', title:'Gaming Mouse', price:899, img:'https://picsum.photos/seed/4/400/300'}
+    ];
+
+    // load state from localStorage or initialize
+    const state = JSON.parse(localStorage.getItem('shopease_state') || '{}');
+    state.products = state.products || SAMPLE_PRODUCTS;
+    state.users = state.users || []; // {name,email,password}
+    state.session = state.session || null; // email
+    state.wishlist = state.wishlist || [];
+    state.orders = state.orders || [];
+    state.reviews = state.reviews || []; // {productId,author,text,when}
+
+    function save(){ localStorage.setItem('shopease_state', JSON.stringify(state)); }
+
+    /* ---------- UI helpers & navigation ---------- */
+    function showSection(id){
+      const sections = ['home','products','orders','wishlist','contact','about'];
+      sections.forEach(s=>{ const el=document.getElementById(s); if(!el) return; el.style.display=(s===id? (s==='home'?'block':'block'):'none') });
+      // toggle widgets
+      document.getElementById('orders').style.display = (id==='orders') ? 'block' : 'none';
+      document.getElementById('wishlist').style.display = (id==='wishlist') ? 'block' : 'none';
+      document.getElementById('customer-care').style.display = (id==='contact') ? 'block' : 'none';
+      document.getElementById('reporting').style.display = (id==='contact') ? 'block' : 'none';
+      document.getElementById('reviews').style.display = (id==='products') ? 'block' : 'none';
+    }
+
+    document.querySelectorAll('[data-nav]').forEach(btn=>btn.addEventListener('click',()=>showSection(btn.getAttribute('data-nav'))));
+
+    // open login modal
+    document.getElementById('open-login').addEventListener('click',()=>document.getElementById('auth-modal').style.display='flex');
+    document.getElementById('close-auth').addEventListener('click',()=>document.getElementById('auth-modal').style.display='none');
+
+    /* ---------- Render products ---------- */
+    function renderProducts(){
+      const list = document.getElementById('product-list'); list.innerHTML='';
+      state.products.forEach(p=>{
+        const d = document.createElement('div'); d.className='product';
+        d.innerHTML = `
+          <img src="${p.img}" alt="${p.title}" />
+          <h4 style="margin:8px 0 4px">${p.title}</h4>
+          <div class="small">₹${p.price}</div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn btn-primary" data-add="${p.id}">Buy</button>
+            <button class="btn btn-ghost" data-wish="${p.id}">Wishlist</button>
+            <button class="btn" data-review="${p.id}">Reviews</button>
+          </div>
+        `;
+        list.appendChild(d);
+      });
+    }
+
+    document.getElementById('product-list').addEventListener('click',e=>{
+      const buy = e.target.closest('[data-add]');
+      const wish = e.target.closest('[data-wish]');
+      const rev = e.target.closest('[data-review]');
+      if(buy){ addToOrders(buy.getAttribute('data-add')); }
+      if(wish){ toggleWishlist(wish.getAttribute('data-wish')); }
+      if(rev){ openReviews(rev.getAttribute('data-review')); }
+    });
+
+    /* ---------- Wishlist & Orders ---------- */
+    function updateCounters(){
+      document.getElementById('orders-count').textContent = state.orders.length;
+      document.getElementById('wishlist-count').textContent = state.wishlist.length;
+    }
+
+    function renderWishlist(){
+      const list = document.getElementById('wishlist-list'); list.innerHTML='';
+      state.wishlist.forEach(id=>{
+        const p = state.products.find(x=>x.id===id); if(!p) return;
+        const el = document.createElement('div'); el.className='list-item';
+        el.innerHTML = <strong>${p.title}</strong><div class="small">₹${p.price}</div><div style="margin-top:6px"><button class="btn btn-primary" data-buy="${p.id}">Buy</button> <button class="btn btn-ghost" data-remove="${p.id}">Remove</button></div>;
+        list.appendChild(el);
+      });
+    }
+
+    document.getElementById('wishlist-list').addEventListener('click',e=>{
+      const buy = e.target.closest('[data-buy]');
+      const rem = e.target.closest('[data-remove]');
+      if(buy) addToOrders(buy.getAttribute('data-buy'));
+      if(rem) { toggleWishlist(rem.getAttribute('data-remove')); }
+    });
+
+    function renderOrders(){
+      const list = document.getElementById('orders-list'); list.innerHTML='';
+      state.orders.forEach(o=>{
+        const p = state.products.find(x=>x.id===o.id) || {title:'Unknown',price:0};
+        const el = document.createElement('div'); el.className='list-item';
+        el.innerHTML = <strong>${p.title}</strong><div class="small">₹${p.price} • ${new Date(o.when).toLocaleString()}</div>;
+        list.appendChild(el);
+      });
+    }
+
+    function addToOrders(productId){
+      if(!state.session){ alert('Please login or register to place orders.'); document.getElementById('auth-modal').style.display='flex'; return; }
+      state.orders.push({id:productId, when:Date.now(), by:state.session});
+      // remove from wishlist if present
+      state.wishlist = state.wishlist.filter(x=>x!==productId);
+      save(); updateUI();
+      alert('Order placed (demo). Check Orders list.');
+    }
+
+    function toggleWishlist(productId){
+      if(state.wishlist.includes(productId)) state.wishlist = state.wishlist.filter(x=>x!==productId);
+      else state.wishlist.push(productId);
+      save(); updateUI();
+    }
+
+    /* ---------- Reviews & comments ---------- */
+    function openReviews(productId){
+      const container = document.getElementById('reviews'); container.style.display='block';
+      const list = document.getElementById('reviews-list'); list.innerHTML='';
+      const product = state.products.find(p=>p.id===productId);
+      const header = document.createElement('div'); header.innerHTML = <strong>${product.title}</strong><div class="small">Reviews</div>;
+      list.appendChild(header);
+
+      state.reviews.filter(r=>r.productId===productId).forEach(r=>{
+        const el = document.createElement('div'); el.className='list-item';
+        el.innerHTML = <div><strong>${r.author}</strong> <span class="small">• ${new Date(r.when).toLocaleString()}</span></div><div style="margin-top:6px">${r.text}</div>;
+        list.appendChild(el);
+      });
+
+      // add review form
+      const formEl = document.createElement('div'); formEl.className='list-item';
+      formEl.innerHTML = `
+        <div style="font-weight:600">Add a review</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <input id="rev-name" placeholder="Your name" />
+          <textarea id="rev-text" rows="3" placeholder="Your review"></textarea><div style="display:flex;gap:8px"><button class="btn btn-primary" id="rev-submit">Submit</button><button class="btn" id="rev-close">Close</button></div>
+    </div>
+  `;
+  list.appendChild(formEl);
+
+  document.getElementById('rev-submit').onclick = ()=>{
+    const author = document.getElementById('rev-name').value.trim()|| (state.session || 'Anonymous');
+    const text = document.getElementById('rev-text').value.trim();
+    if(!text){ alert('Please write a review.'); return; }
+    state.reviews.push({productId,author,text,when:Date.now()}); save(); openReviews(productId);
+  };
+  document.getElementById('rev-close').onclick = ()=>{ document.getElementById('reviews').style.display='none'; }
+}
+
+/* ---------- Customer Care & Reporting ---------- */
+document.getElementById('contact-form').addEventListener('submit',e=>{
+  e.preventDefault(); const name=document.getElementById('cname').value.trim(); const msg=document.getElementById('cmsg').value.trim();
+  if(!name||!msg){ alert('Please complete the message'); return; }
+  alert('Message sent to Customer Care (demo).'); e.target.reset();
+});
+
+// reporting populate products select
+function fillReportOptions(){
+  const select = document.getElementById('rproduct'); select.innerHTML='';
+  state.products.forEach(p=>{ const opt = document.createElement('option'); opt.value=p.id; opt.textContent=p.title; select.appendChild(opt); });
+}
+
+document.getElementById('report-form').addEventListener('submit',e=>{
+  e.preventDefault(); const p=document.getElementById('rproduct').value; const reason=document.getElementById('rreason').value.trim();
+  if(!reason){ alert('Please explain the issue'); return; }
+  alert('Report submitted (demo). Thank you.'); e.target.reset();
+});
+
+/* ---------- Auth: Register & Login with validation ---------- */
+function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+
+document.getElementById('register-form').addEventListener('submit',e=>{
+  e.preventDefault(); const name=document.getElementById('reg-name').value.trim(); const email=document.getElementById('reg-email').value.trim().toLowerCase(); const pass=document.getElementById('reg-password').value; const conf=document.getElementById('reg-confirm').value; const err=document.getElementById('reg-error'); err.textContent='';
+  if(!name||!email||!pass||!conf){ err.textContent='Please fill all fields.'; return; }
+  if(!validateEmail(email)){ err.textContent='Enter a valid email.'; return; }
+  if(pass.length<6){ err.textContent='Password must be at least 6 characters.'; return; }
+  if(pass !== conf){ err.textContent='Passwords do not match.'; return; }
+  if(state.users.some(u=>u.email===email)){ err.textContent='An account with that email already exists.'; return; }
+  state.users.push({name,email,password:pass}); state.session = email; save(); updateUI(); document.getElementById('auth-modal').style.display='none';
+  alert('Account created & logged in.');
+});
+
+document.getElementById('login-form').addEventListener('submit',e=>{
+  e.preventDefault(); const email=document.getElementById('login-email').value.trim().toLowerCase(); const pass=document.getElementById('login-password').value; const err=document.getElementById('login-error'); err.textContent='';
+  if(!validateEmail(email)){ err.textContent='Enter a valid email.'; return; }
+  const user = state.users.find(u=>u.email===email && u.password===pass);
+  if(!user){ err.textContent='Wrong email or password.'; return; }
+  state.session = email; save(); updateUI(); document.getElementById('auth-modal').style.display='none'; alert('Logged in.');
+});
+
+function updateUI(){
+  renderProducts(); renderWishlist(); renderOrders(); updateCounters(); fillReportOptions();
+  document.getElementById('welcome-user').textContent = state.session ? ('Hello, '+(state.users.find(u=>u.email===state.session)?.name || state.session)) : 'Not signed in';
+}
+
+// initialize
+updateUI();
+
+// expose for dev/testing (optional)
+window._SE = {state, save, renderProducts};
+
+  </script>
+</body>
+</html>
